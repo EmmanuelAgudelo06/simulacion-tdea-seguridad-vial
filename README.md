@@ -6,6 +6,10 @@ atropella a un estudiante en el andén y aparece el mensaje. Luego se puede ver 
 Es una **página web**: se abre desde el navegador del celular (iPhone o Android), sin instalar nada.
 La realidad aumentada funciona con un **marcador impreso** (MindAR + Three.js).
 
+**Link:** <https://emmanuelagudelo06.github.io/simulacion-tdea-seguridad-vial/> · **Marcador para imprimir:** <https://emmanuelagudelo06.github.io/simulacion-tdea-seguridad-vial/web/marcador/imprimir.html>
+
+Para actualizar el sitio basta con `git push` a `main`: GitHub Pages lo republica en uno o dos minutos.
+
 ## Estructura
 
 ```
