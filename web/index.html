@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#16181c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Baja la velocidad · TdeA</title>
+  <meta name="description" content="Simulación de seguridad vial en realidad aumentada: salida vehicular del TdeA Sede Robledo.">
+  <link rel="stylesheet" href="css/estilos.css">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./vendor/three/three.module.js",
+      "three/addons/": "./vendor/three/addons/",
+      "mindar-image-three": "./vendor/mindar/mindar-image-three.prod.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- Vista de realidad aumentada (MindAR pone aquí la cámara y el lienzo 3D) -->
+  <div id="ar"></div>
+  <!-- Vista 3D sin marcador -->
+  <div id="demo"></div>
+
+  <div id="destello"></div>
+
+  <div id="ui">
+    <!-- Inicio -->
+    <section id="inicio" class="panel">
+      <div class="franja"></div>
+      <p class="eyebrow">SEGURIDAD VIAL · TdeA SEDE ROBLEDO</p>
+      <h1>BAJA LA VELOCIDAD</h1>
+      <p class="texto">Una salida vehicular, un conductor distraído y un peatón en el andén. Apunta al marcador impreso y mira lo que pasa en un segundo.</p>
+      <p class="etiqueta">Tamaño de la escena</p>
+      <div id="tamanos" class="segmentado">
+        <button type="button">Pequeña</button>
+        <button type="button" class="activo">Mediana</button>
+        <button type="button">Grande</button>
+      </div>
+      <button id="btn-comenzar" type="button" class="boton primario">Comenzar</button>
+      <button id="btn-demo" type="button" class="boton secundario">Ver en 3D sin marcador</button>
+      <p class="nota">Pon el <a href="marcador/imprimir.html" target="_blank">marcador impreso</a> en el piso o en una mesa, con buena luz. Párate en el lado que dice «párate aquí» y apunta la cámara a la hoja.</p>
+      <p id="aviso" class="nota aviso" hidden></p>
+    </section>
+
+    <!-- HUD superior -->
+    <header id="hud" hidden>
+      <div id="subtitulo" class="panel" hidden></div>
+      <div id="velocimetro" class="panel">
+        <div id="kmh">0</div>
+        <div class="unidad">KM/H</div>
+        <div class="pista"><div id="barra"></div></div>
+      </div>
+    </header>
+
+    <!-- Indicación (buscar el marcador, errores) -->
+    <section id="indicacion" class="panel" hidden>
+      <img id="indicacion-marcador" src="marcador/marcador.png" alt="Marcador" hidden>
+      <p id="indicacion-texto"></p>
+    </section>
+
+    <!-- Mensaje final -->
+    <section id="final" class="panel" hidden>
+      <div class="franja"></div>
+      <p class="eyebrow"></p>
+      <h2></h2>
+      <p class="texto"></p>
+      <ul></ul>
+      <div class="fila">
+        <button id="btn-final-a" type="button" class="boton primario"></button>
+        <button id="btn-final-b" type="button" class="boton secundario"></button>
+      </div>
+    </section>
+
+    <!-- Controles inferiores -->
+    <nav id="controles" class="fila" hidden>
+      <button id="btn-repetir" type="button" class="boton oscuro">Repetir</button>
+      <button id="btn-tamano" type="button" class="boton oscuro">Tamaño</button>
+      <button id="btn-inicio" type="button" class="boton oscuro">Inicio</button>
+    </nav>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

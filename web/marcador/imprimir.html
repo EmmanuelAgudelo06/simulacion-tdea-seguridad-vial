@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Marcador · Baja la velocidad</title>
+  <style>
+    @page { size: A4 landscape; margin: 8mm; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, Arial, sans-serif; color: #16181c; background: #e9e7e1; }
+    .hoja { max-width: 1100px; margin: 0 auto; padding: 16px; text-align: center; }
+    img { display: block; width: 100%; height: auto; margin: 0 auto; background: #fff; }
+    .pie { margin-top: 10px; font-weight: 900; font-size: 22px; letter-spacing: 0.08em; }
+    .ayuda { max-width: 680px; margin: 16px auto 0; font-size: 15px; line-height: 1.5; text-align: left; }
+    button { font: inherit; font-weight: 800; padding: 10px 18px; border: 0; background: #ffd23f; cursor: pointer; }
+    @media print {
+      body { background: #fff; }
+      .hoja { padding: 0; max-width: none; }
+      img { width: auto; height: 172mm; }
+      .ayuda, .no-imprimir { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hoja">
+    <p class="no-imprimir"><button onclick="window.print()">Imprimir (A4 o carta, horizontal)</button></p>
+    <img src="marcador.png" alt="Marcador de la simulación Baja la velocidad">
+    <div class="pie">▲ PÁRATE AQUÍ Y APUNTA A LA HOJA ▲</div>
+    <div class="ayuda">
+      <p><strong>Cómo usarlo:</strong> imprime la hoja a color, sin «ajustar a página» con márgenes grandes, y ponla plana en el piso o en una mesa.
+        Que no tenga arrugas ni brillo de lámpara encima. Párate en el lado del texto «párate aquí»,
+        abre la simulación y apunta la cámara a la hoja desde unos 40–80 cm de altura, en diagonal.</p>
+      <p>Mientras más grande la impresión, desde más lejos se puede ver (sirve también en pantalla de un portátil o tablet,
+        o impresa en pliego para el piso del salón). Si el rastreo se pierde, la simulación se pausa sola hasta que vuelvas a apuntar.</p>
+    </div>
+  </div>
+</body>
+</html>

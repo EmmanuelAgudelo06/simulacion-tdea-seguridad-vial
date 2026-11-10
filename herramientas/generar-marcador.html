@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Generar marcador</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 16px; background: #eee; color: #111; }
+    canvas { max-width: 100%; height: auto; box-shadow: 0 2px 12px #0003; background: #fff; }
+    button { font: inherit; padding: 8px 14px; margin: 8px 8px 8px 0; }
+    #estado { font-family: ui-monospace, monospace; }
+  </style>
+</head>
+<body>
+  <h1>Marcador de la simulación</h1>
+  <p>Dibuja el marcador (siempre igual, usa una semilla fija), lo compila para MindAR y lo descarga
+     (<code>marcador.png</code> y <code>marcador.mind</code>). Cópialos a <code>web/marcador/</code>.
+     Si la página se sirve con el servidor de desarrollo que acepta <code>PUT</code>, los guarda directamente.</p>
+  <button id="compilar">Compilar y guardar</button>
+  <span id="estado"></span>
+  <br>
+  <canvas id="lienzo" width="1400" height="990"></canvas>
+
+  <script type="module">
+    import { Compiler } from '../web/vendor/mindar/mindar-image.prod.js';
+
+    const W = 1400, H = 990;
+    const c = document.getElementById('lienzo');
+    const ctx = c.getContext('2d');
+
+    function aleatorio(semilla) {
+      let s = semilla >>> 0;
+      return () => {
+        s = (s + 0x6d2b79f5) >>> 0;
+        let t = s;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+    const r = aleatorio(20261110);
+    const colores = ['#16181c', '#1f7a3d', '#ffd23f', '#e5482f', '#2f6db5', '#9aa0a8', '#16181c', '#1f7a3d', '#ffffff'];
+    const elegir = (a) => a[Math.floor(r() * a.length)];
+
+    // Fondo
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
+
+    // Figuras aleatorias: muchas esquinas y contraste para que el rastreo sea estable
+    for (let i = 0; i < 230; i++) {
+      const x = r() * W, y = r() * H, s = 14 + r() ** 2 * 120;
+      ctx.fillStyle = elegir(colores);
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(r() * Math.PI * 2);
+      const tipo = r();
+      ctx.beginPath();
+      if (tipo < 0.4) {
+        ctx.moveTo(0, -s); ctx.lineTo(s * 0.9, s * 0.7); ctx.lineTo(-s * (0.3 + r() * 0.7), s * 0.5);
+      } else if (tipo < 0.7) {
+        ctx.rect(-s / 2, -s * 0.3, s, s * (0.2 + r() * 0.6));
+      } else if (tipo < 0.85) {
+        ctx.arc(0, 0, s * 0.45, 0, Math.PI * 2);
+      } else {
+        ctx.moveTo(-s, 0); ctx.lineTo(0, -s * 0.3); ctx.lineTo(s, 0); ctx.lineTo(s * 0.2, s * 0.6);
+      }
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // Franjas tipo cebra en una esquina (asimetría)
+    for (let i = 0; i < 7; i++) {
+      ctx.fillStyle = i % 2 ? '#ffffff' : '#16181c';
+      ctx.fillRect(60 + i * 34, 820, 34, 110);
+    }
+
+    // Título
+    ctx.fillStyle = '#ffd23f';
+    ctx.fillRect(250, 330, 900, 300);
+    ctx.strokeStyle = '#16181c'; ctx.lineWidth = 14;
+    ctx.strokeRect(250, 330, 900, 300);
+    ctx.fillStyle = '#16181c';
+    ctx.font = '900 128px "Arial Black", "Helvetica Neue", Arial, sans-serif';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText('BAJA LA', 290, 460);
+    ctx.fillText('VELOCIDAD', 290, 590);
+    ctx.fillStyle = '#1f7a3d';
+    ctx.fillRect(250, 640, 560, 64);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 40px "Helvetica Neue", Arial, sans-serif';
+    ctx.fillText('TdeA · SEDE ROBLEDO', 270, 686);
+
+    // Borde
+    ctx.strokeStyle = '#16181c'; ctx.lineWidth = 30;
+    ctx.strokeRect(15, 15, W - 30, H - 30);
+
+    const estado = document.getElementById('estado');
+
+    async function guardar(nombre, blob) {
+      try {
+        const res = await fetch('/guardar/' + nombre, { method: 'PUT', body: blob });
+        if (res.ok) return 'guardado';
+      } catch { /* sin servidor de desarrollo: se descarga */ }
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = nombre;
+      a.click();
+      return 'descargado';
+    }
+
+    document.getElementById('compilar').onclick = async () => {
+      estado.textContent = 'Compilando… 0%';
+      const img = new Image();
+      img.src = c.toDataURL('image/png');
+      await img.decode();
+      const compiler = new Compiler();
+      await compiler.compileImageTargets([img], (p) => { estado.textContent = 'Compilando… ' + p.toFixed(0) + '%'; });
+      const datos = await compiler.exportData();
+      const png = await new Promise((ok) => c.toBlob(ok, 'image/png'));
+      const r1 = await guardar('marcador.png', png);
+      const r2 = await guardar('marcador.mind', new Blob([datos]));
+      estado.textContent = `Listo: marcador.png ${r1}, marcador.mind ${r2} (${datos.byteLength} bytes)`;
+    };
+  </script>
+</body>
+</html>
